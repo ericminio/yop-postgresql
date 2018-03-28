@@ -1,18 +1,8 @@
 language: node_js
 node_js:
   - "6"
-sudo: false
-dist: trusty
-addons:
-  postgresql: "9.5"
 services:
   - postgresql
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
-env:
-  global:
-    - PGHOST=localhost
-    - PGDATABASE=travis_ci_test
-    - PGUSER=postgres
-    - PGPASSWORD=
+  - psql -c 'create database ci;' -U postgres
   
