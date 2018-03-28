@@ -1,8 +1,15 @@
 {
     "name": "yop-postgresql",
     "version": "1.0.0",
+    "main": "lib/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ericminio/yop-postgresql.git"
+    },
+    "license": "MIT",
     "dependencies": {
-        "pg": "latest"
+        "pg": "latest",
+        "yop-promises": "^1.0.1"
     },
     "devDependencies": {
         "babel-polyfill": "latest",
@@ -19,6 +26,6 @@
         "npm": ">=3.10.10"
     },
     "scripts": {
-        "test": "./node_modules/.bin/mocha --require babel-polyfill --require babel-register demo"
+        "test": "./node_modules/.bin/mocha --require babel-polyfill --require babel-register demo --exit"
     }
 }

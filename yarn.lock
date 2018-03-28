@@ -1066,3 +1066,7 @@ wrappy@1:
 xtend@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
+
+yop-promises@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/yop-promises/-/yop-promises-1.0.1.tgz#5c2f1d7a647fc07f0de6de6e170f30a7068be805"
