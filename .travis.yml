@@ -5,4 +5,10 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database ci;' -U postgres
+env:
+  global:
+    - PGHOST=localhost
+    - PGDATABASE=ci
+    - PGUSER=postgres
+    - PGPASSWORD=
   
