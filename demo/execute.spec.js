@@ -73,27 +73,25 @@ describe('execute', () => {
         });
     });
     it('allows to use strings as statements', (done)=>{
-        var all = [
+        execute([
             'create table if not exists greatness(id int, name varchar)',
             'truncate table greatness',
             'insert into greatness(id, name) values(1, \'liberty\')',
             'select name from greatness'
-        ];
-        execute(all, (rows)=>{
+        ], (rows)=>{
             expect(rows.length).to.equal(1);
             expect(rows[0].name).to.equal('liberty');
             done();
         });
     });
     it('stops after first error in collection', (done)=>{
-        var all = [
+        execute([
             'create table if not exists greatness(id int, name varchar)',
             'truncate table greatness',
             'create tableifnotexists greatness(id int, name varchar)',
             'insert into greatness(id, name) values(1, \'liberty\')',
             'select name from greatness'
-        ];
-        execute(all, (rows, error)=>{
+        ], (rows, error)=>{
             expect(error.message).to.contain('syntax error at or near "tableifnotexists"');
             expect(rows).to.deep.equal([]);
 
@@ -121,31 +119,25 @@ describe('execute', () => {
         });
     });
     it('stops also when first statement fails', (done)=>{
-        var all = [
-            'create tableifnotexists greatness(id int, name varchar)',
+        execute([
             'create table if not exists greatness(id int, name varchar)',
-            'truncate table greatness',
-            'insert into greatness(id, name) values(1, \'liberty\')',
-            'select name from greatness'
-        ];
-        execute(all, (rows, error)=>{
-            expect(rows).to.deep.equal([]);
-            expect(error.message).to.contain('syntax error at or near "tableifnotexists"');
-
-            setTimeout(()=> {
-                var all = [
-                    'create table if not exists greatness(id int, name varchar)',
-                    'truncate table greatness',
-                    'insert into greatness(id, name) values(1, \'liberty\')',
-                    'select name from greatness'
-                ];
-                execute(all, (rows)=>{
-                    expect(rows.length).to.equal(1);
-                    expect(rows[0].name).to.equal('liberty');
-                    done();
-                });
-            }, 300);            
-        });
+            'truncate table greatness'
+        ], (rows, error)=>{
+            execute([
+                'create tableifnotexists greatness(id int, name varchar)',
+                'insert into greatness(id, name) values(1, \'liberty\')',
+            ], (rows, error)=>{
+                expect(rows).to.deep.equal([]);
+                expect(error.message).to.contain('syntax error at or near "tableifnotexists"');
+    
+                setTimeout(()=> {
+                    execute('select name from greatness', (rows)=>{
+                        expect(rows).to.deep.equal([]);
+                        done();
+                    });
+                }, 300);            
+            });
+        });        
     });
     it('accepts a single statement in the collection', (done) => {
         execute(['select current_user'], (rows)=>{
