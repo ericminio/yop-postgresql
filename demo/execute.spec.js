@@ -45,7 +45,30 @@ describe('execute', () => {
     });
     it('support empty collection', (done)=>{
         execute([], (rows)=>{
-            expect(rows.length).to.equal(0);
+            expect(rows).to.deep.equal([]);
+            done();
+        });
+    });
+    it('let sql errors bubble', (done)=>{
+        execute('select from unknown', [], (rows, error)=>{
+            expect(error.message).to.contain('"unknown" does not exist');
+            done();
+        });
+    });
+    it('let connection errors bubble', (done)=>{
+        process.env.PGUSER='unknown';
+        process.env.PGDATABASE='unknown';
+        process.env.PGHOST='unknown';
+        process.env.PGPASSWORD='unknown'; 
+        execute('select from unknown', [], (rows, error)=>{
+            expect(rows).to.deep.equal([]);
+            expect(error.message).to.contain('getaddrinfo ENOTFOUND unknown');
+            done();
+        });
+    });
+    it('defaults error to undefined', (done)=>{
+        execute('select current_user', [], (rows, error)=>{
+            expect(error).to.equal(undefined);
             done();
         });
     });
