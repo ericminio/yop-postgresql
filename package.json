@@ -26,6 +26,7 @@
         "npm": ">=3.10.10"
     },
     "scripts": {
-        "test": "./node_modules/.bin/mocha --require babel-polyfill --require babel-register demo --exit"
+        "test": "./node_modules/.bin/mocha --require babel-polyfill --require babel-register demo --exit",
+        "kata": "./node_modules/.bin/mocha --require babel-polyfill --require babel-register demo/prime.factors.spec.js --exit"
     }
 }
