@@ -12,45 +12,43 @@ describe('string_agg', () => {
     it('works as expected', (done) => {
         var background = [
             `
-                create table if not exists products(
+                drop table if exists planes;
+                create table planes(
                     id serial primary key,
-                    name varchar,
-                    modified timestamp default now()
+                    name varchar
                 );
-                truncate table products;
-                insert into products(id ,name) values(1, \'GITN\');
-                insert into products(id, name) values(2, \'GSDZ\');
+                insert into planes(id ,name) values(1, \'GITN\');
+                insert into planes(id, name) values(2, \'GSDZ\');
 
-                create table if not exists equipments(
+                drop table if exists equipments;
+                create table equipments(
                     id serial primary key,
-                    name varchar,
-                    modified timestamp default now()
+                    name varchar
                 );
-                truncate table equipments;
                 insert into equipments(id, name) values(1, \'radio\');
                 insert into equipments(id, name) values(2, \'altimeter\');
-                insert into equipments(id, name) values(3, \'airspeed indicator\');
+                insert into equipments(id, name) values(3, \'gps\');
 
-                create table if not exists equipment_list(
-                    product_id serial,
+                drop table if exists equipment_list;
+                create table equipment_list(
+                    plane_id serial,
                     equipment_id serial
                 );
-                truncate table equipment_list;
-                insert into equipment_list(product_id, equipment_id) values (1, 1);
-                insert into equipment_list(product_id, equipment_id) values (1, 2);
-                insert into equipment_list(product_id, equipment_id) values (1, 3);
-                insert into equipment_list(product_id, equipment_id) values (2, 1);
-                insert into equipment_list(product_id, equipment_id) values (2, 2);
+                insert into equipment_list(plane_id, equipment_id) values (1, 1);
+                insert into equipment_list(plane_id, equipment_id) values (1, 2);
+                insert into equipment_list(plane_id, equipment_id) values (1, 3);
+                insert into equipment_list(plane_id, equipment_id) values (2, 1);
+                insert into equipment_list(plane_id, equipment_id) values (2, 2);
             `,
             `
             select
-                products.name,
+                planes.name,
                 string_agg(equipments.name, ', ') as equipments
-            from products, equipment_list, equipments
+            from planes, equipment_list, equipments
             where
-                equipment_list.product_id = products.id
+                equipment_list.plane_id = planes.id
                 and equipment_list.equipment_id = equipments.id
-            group by products.name
+            group by planes.name
             ;
             `
         ];
@@ -61,7 +59,7 @@ describe('string_agg', () => {
             expect(rows[0].name).to.equal('GITN')
             expect(rows[1].name).to.equal('GSDZ')
 
-            expect(rows[0].equipments).to.equal('radio, altimeter, airspeed indicator')
+            expect(rows[0].equipments).to.equal('radio, altimeter, gps')
             expect(rows[1].equipments).to.equal('radio, altimeter')
 
             done();
