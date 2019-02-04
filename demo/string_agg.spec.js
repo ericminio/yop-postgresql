@@ -9,7 +9,7 @@ describe('string_agg', () => {
         process.env.PGHOST='localhost';
         process.env.PGPASSWORD='';
     });
-    it('just work as expected', (done) => {
+    it('works as expected', (done) => {
         var background = [
             `
                 create table if not exists products(
