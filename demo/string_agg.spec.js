@@ -54,14 +54,10 @@ describe('string_agg', () => {
         ];
         execute(background, (rows, error)=>{
             expect(error).to.equal(undefined);
-
-            expect(rows.length).to.equal(2)
-            expect(rows[0].name).to.equal('GITN')
-            expect(rows[1].name).to.equal('GSDZ')
-
-            expect(rows[0].equipments).to.equal('radio, altimeter, gps')
-            expect(rows[1].equipments).to.equal('radio, altimeter')
-
+            expect(rows).to.deep.equal([
+                { name:'GITN', equipments:'radio, altimeter, gps' },
+                { name:'GSDZ', equipments:'radio, altimeter' }
+            ])
             done();
         });
     });
