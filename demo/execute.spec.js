@@ -7,7 +7,7 @@ describe('execute', () => {
         process.env.PGUSER='postgres';
         process.env.PGDATABASE='postgres';
         process.env.PGHOST='localhost';
-        process.env.PGPASSWORD='';        
+        process.env.PGPASSWORD='';
     });
     it('is available', (done) => {
         execute('select current_user', [], (rows)=>{
@@ -59,7 +59,7 @@ describe('execute', () => {
         process.env.PGUSER='unknown';
         process.env.PGDATABASE='unknown';
         process.env.PGHOST='unknown';
-        process.env.PGPASSWORD='unknown'; 
+        process.env.PGPASSWORD='unknown';
         execute('select from unknown', [], (rows, error)=>{
             expect(rows).to.deep.equal([]);
             expect(error.message).to.contain('getaddrinfo ENOTFOUND unknown');
@@ -100,7 +100,7 @@ describe('execute', () => {
                     expect(rows).to.deep.equal([]);
                     done();
                 });
-            }, 300);            
+            }, 300);
         });
     });
     it('accepts different formats in the same collection', (done)=>{
@@ -129,15 +129,15 @@ describe('execute', () => {
             ], (rows, error)=>{
                 expect(rows).to.deep.equal([]);
                 expect(error.message).to.contain('syntax error at or near "tableifnotexists"');
-    
+
                 setTimeout(()=> {
                     execute('select name from greatness', (rows)=>{
                         expect(rows).to.deep.equal([]);
                         done();
                     });
-                }, 300);            
+                }, 300);
             });
-        });        
+        });
     });
     it('accepts a single statement in the collection', (done) => {
         execute(['select current_user'], (rows)=>{
@@ -151,4 +151,22 @@ describe('execute', () => {
             done();
         });
     });
+    describe('await syntax', ()=>{
+
+        it('is welcomed for one statement', async ()=>{
+            var rows = await execute('select current_user')
+
+            expect(rows.length).to.equal(1)
+            expect(rows[0].current_user).to.equal('postgres')
+        })
+        it('is welcomed for one statement with params', async ()=>{
+            await execute('create table if not exists greatness(id int, name varchar)')
+            await execute('truncate table greatness')
+            await execute('insert into greatness(id, name) values($1, $2)', [1, 'liberty'])
+            var rows = await execute('select name from greatness')
+
+            expect(rows.length).to.equal(1)
+            expect(rows[0].name).to.equal('liberty')
+        })
+    })
 });

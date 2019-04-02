@@ -9,7 +9,7 @@
     "license": "MIT",
     "dependencies": {
         "pg": "latest",
-        "yop-promises": "^1.1.0"
+        "yop-promises": "^1.4.0"
     },
     "devDependencies": {
         "babel-polyfill": "latest",
