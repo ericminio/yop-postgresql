@@ -168,5 +168,29 @@ describe('execute', () => {
             expect(rows.length).to.equal(1)
             expect(rows[0].name).to.equal('liberty')
         })
+        it('let error bubble', async ()=>{
+            try {
+                await execute('select * from unknown')
+            }
+            catch (error) {
+                expect(error.message).to.equal('relation "unknown" does not exist')
+            }
+        })
+        it('is welcomed with several statements', async ()=>{
+            var all = [
+                'create table if not exists greatness(id int, name varchar)',
+                'truncate table greatness',
+                { sql: 'insert into greatness(id, name) values($1, $2)', params:[1, 'liberty'] },
+                { sql: 'insert into greatness(id, name) values($1, $2)', params:[2, 'equality'] },
+                { sql: 'insert into greatness(id, name) values($1, $2)', params:[3, 'fraternity'] },
+                'select name from greatness'
+            ]
+            var rows = await execute(all)
+
+            expect(rows.length).to.equal(3)
+            expect(rows[0].name).to.equal('liberty')
+            expect(rows[1].name).to.equal('equality')
+            expect(rows[2].name).to.equal('fraternity')
+        })
     })
 });

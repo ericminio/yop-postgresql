@@ -8,8 +8,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "pg": "latest",
-        "yop-promises": "^1.4.0"
+        "pg": "^7.9.0"
     },
     "devDependencies": {
         "babel-polyfill": "latest",
