@@ -51,8 +51,8 @@ describe('string_agg', () => {
                 group by planes.name
             `
         ];
-        execute(background, (rows, error)=>{
-            expect(error).to.equal(null);
+        execute(background, (err, rows)=>{
+            expect(err).to.equal(null);
             expect(rows).to.deep.equal([
                 { name:'GITN', equipments:'radio, altimeter, gps' },
                 { name:'GSDZ', equipments:'radio, altimeter' }

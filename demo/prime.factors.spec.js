@@ -9,14 +9,14 @@ describe('Prime factors', () => {
         process.env.PGDATABASE='postgres';
         process.env.PGHOST='localhost';
         process.env.PGPASSWORD='';
-        execute(fs.readFileSync('./demo/prime.factors.sql').toString(), (rows, error)=>{
-            expect(error).to.equal(null);
+        execute(fs.readFileSync('./demo/prime.factors.sql').toString(), (err, rows)=>{
+            expect(err).to.equal(null);
             done();
         });
     });
     var primeFactorsOf = function(number, done) {
-        execute('select factor from prime_factors_of($1)', [number], (rows, error)=> {
-            expect(error).to.equal(null);
+        execute('select factor from prime_factors_of($1)', [number], (err, rows)=> {
+            expect(err).to.equal(null);
             done(rows);
         });
     }

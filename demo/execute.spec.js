@@ -10,7 +10,7 @@ describe('execute', () => {
         process.env.PGPASSWORD='';
     });
     it('is available', (done) => {
-        execute('select current_user', [], (rows)=>{
+        execute('select current_user', [], (err, rows)=>{
             expect(rows[0].current_user).to.equal('postgres');
             done();
         });
@@ -19,7 +19,7 @@ describe('execute', () => {
         execute('create table if not exists greatness(id int, name varchar)', [], ()=>{
             execute('truncate table greatness', [], ()=>{
                 execute('insert into greatness(id, name) values($1, $2)', [1, 'liberty'], ()=> {
-                    execute('select name from greatness', [], function(rows) {
+                    execute('select name from greatness', [], function(err, rows) {
                         expect(rows.length).to.equal(1);
                         expect(rows[0].name).to.equal('liberty');
                         done();
@@ -37,21 +37,21 @@ describe('execute', () => {
             { sql: 'insert into greatness(id, name) values($1, $2)', params:[3, 'fraternity'] },
             { sql: 'select name from greatness' }
         ];
-        execute(all, (rows)=>{
+        execute(all, (err, rows)=>{
             expect(rows.length).to.equal(3);
             expect(rows[2].name).to.equal('fraternity');
             done();
         });
     });
     it('support empty collection', (done)=>{
-        execute([], (rows)=>{
+        execute([], (err, rows)=>{
             expect(rows).to.deep.equal([]);
             done();
         });
     });
     it('let sql errors bubble', (done)=>{
-        execute('select * from unknown', [], (rows, error)=>{
-            expect(error.message).to.contain('"unknown" does not exist');
+        execute('select * from unknown', [], (err, rows)=>{
+            expect(err.message).to.contain('"unknown" does not exist');
             done();
         });
     });
@@ -60,15 +60,15 @@ describe('execute', () => {
         process.env.PGDATABASE='unknown';
         process.env.PGHOST='unknown';
         process.env.PGPASSWORD='unknown';
-        execute('select from unknown', [], (rows, error)=>{
+        execute('select from unknown', [], (err, rows)=>{
             expect(rows).to.deep.equal([]);
-            expect(error.message).to.contain('getaddrinfo ENOTFOUND unknown');
+            expect(err.message).to.contain('getaddrinfo ENOTFOUND unknown');
             done();
         });
     });
     it('defaults error to null', (done)=>{
-        execute('select current_user', [], (rows, error)=>{
-            expect(error).to.equal(null);
+        execute('select current_user', [], (err, rows)=>{
+            expect(err).to.equal(null);
             done();
         });
     });
@@ -78,7 +78,7 @@ describe('execute', () => {
             'truncate table greatness',
             'insert into greatness(id, name) values(1, \'liberty\')',
             'select name from greatness'
-        ], (rows)=>{
+        ], (err, rows)=>{
             expect(rows.length).to.equal(1);
             expect(rows[0].name).to.equal('liberty');
             done();
@@ -91,12 +91,12 @@ describe('execute', () => {
             'create tableifnotexists greatness(id int, name varchar)',
             'insert into greatness(id, name) values(1, \'liberty\')',
             'select name from greatness'
-        ], (rows, error)=>{
-            expect(error.message).to.contain('syntax error at or near "tableifnotexists"');
+        ], (err, rows)=>{
+            expect(err.message).to.contain('syntax error at or near "tableifnotexists"');
             expect(rows).to.deep.equal([]);
 
             setTimeout(()=> {
-                execute('select name from greatness', [], (rows)=>{
+                execute('select name from greatness', [], (err, rows)=>{
                     expect(rows).to.deep.equal([]);
                     done();
                 });
@@ -112,7 +112,7 @@ describe('execute', () => {
             { sql: 'insert into greatness(id, name) values($1, $2)', params:[3, 'fraternity'] },
             'select name from greatness'
         ];
-        execute(all, (rows)=>{
+        execute(all, (err, rows)=>{
             expect(rows.length).to.equal(3);
             expect(rows[2].name).to.equal('fraternity');
             done();
@@ -122,16 +122,16 @@ describe('execute', () => {
         execute([
             'create table if not exists greatness(id int, name varchar)',
             'truncate table greatness'
-        ], (rows, error)=>{
+        ], (err, rows)=>{
             execute([
                 'create tableifnotexists greatness(id int, name varchar)',
                 'insert into greatness(id, name) values(1, \'liberty\')',
-            ], (rows, error)=>{
+            ], (err, rows)=>{
                 expect(rows).to.deep.equal([]);
-                expect(error.message).to.contain('syntax error at or near "tableifnotexists"');
+                expect(err.message).to.contain('syntax error at or near "tableifnotexists"');
 
                 setTimeout(()=> {
-                    execute('select name from greatness', (rows)=>{
+                    execute('select name from greatness', (err, rows)=>{
                         expect(rows).to.deep.equal([]);
                         done();
                     });
@@ -140,13 +140,13 @@ describe('execute', () => {
         });
     });
     it('accepts a single statement in the collection', (done) => {
-        execute(['select current_user'], (rows)=>{
+        execute(['select current_user'], (err, rows)=>{
             expect(rows[0].current_user).to.equal('postgres');
             done();
         });
     });
     it('accepts a single statement without parameter', (done) => {
-        execute('select current_user', (rows)=>{
+        execute('select current_user', (err, rows)=>{
             expect(rows[0].current_user).to.equal('postgres');
             done();
         });

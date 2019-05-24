@@ -34,15 +34,15 @@ describe('triggers', () => {
             `,
             'select modified from products;'
         ];
-        execute(background, (rows, error)=>{
-            expect(error).to.equal(null);
+        execute(background, (err, rows)=>{
+            expect(err).to.equal(null);
             var oldTimestamp = rows[0].modified;
             var change = [
                 'update products set name=\'cessna\';',
                 'select id, name, modified from products;'
             ];
-            execute(change, (rows, error)=> {
-                expect(error).to.equal(null);
+            execute(change, (err, rows)=> {
+                expect(err).to.equal(null);
 
                 expect(rows[0].name).to.equal('cessna');
                 var newTimestamp = rows[0].modified;
