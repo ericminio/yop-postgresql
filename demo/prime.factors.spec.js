@@ -10,13 +10,13 @@ describe('Prime factors', () => {
         process.env.PGHOST='localhost';
         process.env.PGPASSWORD='';
         execute(fs.readFileSync('./demo/prime.factors.sql').toString(), (rows, error)=>{
-            expect(error).to.equal(undefined);
+            expect(error).to.equal(null);
             done();
         });
     });
     var primeFactorsOf = function(number, done) {
         execute('select factor from prime_factors_of($1)', [number], (rows, error)=> {
-            expect(error).to.equal(undefined);
+            expect(error).to.equal(null);
             done(rows);
         });
     }

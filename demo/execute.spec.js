@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var { execute } = require('../lib');
+var { execute, executeSync } = require('../lib');
 
 describe('execute', () => {
 
@@ -66,9 +66,9 @@ describe('execute', () => {
             done();
         });
     });
-    it('defaults error to undefined', (done)=>{
+    it('defaults error to null', (done)=>{
         execute('select current_user', [], (rows, error)=>{
-            expect(error).to.equal(undefined);
+            expect(error).to.equal(null);
             done();
         });
     });
@@ -154,23 +154,23 @@ describe('execute', () => {
     describe('await syntax', ()=>{
 
         it('is welcomed for one statement', async ()=>{
-            var rows = await execute('select current_user')
+            var rows = await executeSync('select current_user')
 
             expect(rows.length).to.equal(1)
             expect(rows[0].current_user).to.equal('postgres')
         })
         it('is welcomed for one statement with params', async ()=>{
-            await execute('create table if not exists greatness(id int, name varchar)')
-            await execute('truncate table greatness')
-            await execute('insert into greatness(id, name) values($1, $2)', [1, 'liberty'])
-            var rows = await execute('select name from greatness')
+            await executeSync('create table if not exists greatness(id int, name varchar)')
+            await executeSync('truncate table greatness')
+            await executeSync('insert into greatness(id, name) values($1, $2)', [1, 'liberty'])
+            var rows = await executeSync('select name from greatness')
 
             expect(rows.length).to.equal(1)
             expect(rows[0].name).to.equal('liberty')
         })
         it('let error bubble', async ()=>{
             try {
-                await execute('select * from unknown')
+                await executeSync('select * from unknown')
             }
             catch (error) {
                 expect(error.message).to.equal('relation "unknown" does not exist')
@@ -185,7 +185,7 @@ describe('execute', () => {
                 { sql: 'insert into greatness(id, name) values($1, $2)', params:[3, 'fraternity'] },
                 'select name from greatness'
             ]
-            var rows = await execute(all)
+            var rows = await executeSync(all)
 
             expect(rows.length).to.equal(3)
             expect(rows[0].name).to.equal('liberty')
