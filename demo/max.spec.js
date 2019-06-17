@@ -41,6 +41,7 @@ describe('max', () => {
                 where
                     maintenance.plane_id = planes.id
                 group by planes.name
+                order by planes.name asc
             `
         ];
         execute(background, (err, rows)=>{
